@@ -6,6 +6,7 @@ function App() {
   return (
     <Router>
       <Switch>
+        <Route path={`${process.env.PUBLIC_URL}/`} element={<Home />}></Route>
         <Route path="/hello">
           <h1>"hello"</h1>
         </Route>
