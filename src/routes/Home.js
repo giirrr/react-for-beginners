@@ -24,8 +24,10 @@ function Home() {
       ) : (
         <div>
           {movies.map((movie) => (
+            // Home.js가 바로 Movie 컴포넌트를 랜더링 하는 애
             <Movie
               key={movie.id}
+              id={movie.id}
               coverImg={movie.medium_cover_image}
               title={movie.title}
               summary={movie.summary}
