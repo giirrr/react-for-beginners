@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Detail from "./routes/Detail";
 import Home from "./routes/Home";
+import React from "react";
 
 function App() {
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <Switch>
-        <Route path={`${process.env.PUBLIC_URL}/`} element={<Home />}></Route>
         <Route path="/hello">
           <h1>"hello"</h1>
         </Route>
