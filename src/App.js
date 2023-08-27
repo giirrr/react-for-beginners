@@ -2,61 +2,43 @@ import { useState, useEffect } from "react";
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const [coins, setCoins] = useState([]);
-  const [input, setInput] = useState("");
-  const [selectedCoin, setSelectedCoin] = useState("");
-  const [inverted, setInverted] = useState(false);
-  const selectCoin = (event) => setSelectedCoin(event.target.value);
-  const converter = (event) => setInput(event.target.value);
-  const onInvert = () => {
-    reset();
-    setInverted((current) => !current);
+  const [movies, setMovies] = useState([]);
+  const getMovies = async () => {
+    const json = await (
+      await fetch(
+        "https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year"
+      )
+    ).json();
+    setMovies(json.data.movies);
+    setLoading(false);
   };
-  const reset = () => setInput("");
   useEffect(() => {
-    fetch("https://api.coinpaprika.com/v1/tickers")
-      .then((response) => response.json())
-      .then((json) => {
-        setCoins(json);
-        setLoading(false);
-      });
+    getMovies();
   }, []);
+  console.log(movies);
   return (
     <div>
-      <h1>Coin List {loading ? "" : `(${coins.length})`}</h1>
       {loading ? (
-        <strong>Loading...</strong>
+        <h1>Loading...</h1>
       ) : (
-        <select onChange={selectCoin}>
-          {coins.map((coin) => (
-            <option value={coin.quotes.USD.price}>
-              {coin.name} ({coin.symbol}) : ${coin.quotes.USD.price} USD
-            </option>
+        <div>
+          {movies.map((movie) => (
+            // map 을 사용할 때 마다 key를 Element에 줘야함
+            <div key={movie.id}>
+              <img src={movie.medium_cover_image} />
+              <h2>{movie.title}</h2>
+              <p>{movie.summary}</p>
+              <ul>
+                {movie.genres.map((g) => (
+                  // 고유한 값이기만 하다면 key값에 g를 넣어도 상관없음
+                  <li key={g}>{g}</li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </select>
+        </div>
       )}
-      <hr />
-      <h3>USD & Selected Coin Inverter</h3>
-      <label htmlFor="myUsd">My USD</label>
-      <input
-        id="myUsd"
-        type="number"
-        value={inverted ? selectedCoin * input : input}
-        onChange={converter}
-        disabled={inverted}
-      />
-      <label htmlFor="btc"> Selected Coins</label>
-      <input
-        id="btc"
-        type="number"
-        value={inverted ? input : input / selectedCoin}
-        onChange={converter}
-        disabled={!inverted}
-      />
-      <button onClick={onInvert}>Invert</button>
-      <button onClick={reset}>Reset</button>
     </div>
   );
 }
-
 export default App;
